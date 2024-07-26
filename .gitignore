@@ -1,0 +1,5 @@
+# Archivos y directorios generados por Go
+/bin/
+/pkg/
+/vendor/
+/go.sum
