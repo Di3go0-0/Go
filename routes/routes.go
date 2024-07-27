@@ -2,6 +2,8 @@ package routes
 
 import (
 	"net/http"
+	"strings"
+	"os"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,17 +16,30 @@ var users []User
 
 func MainRoutes(r *gin.Engine) *gin.Engine {
 
+	r.Static("/static", "./static")
+
 	r.LoadHTMLGlob("templates/*.html")
 
 	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"Title": "Home Page",
-			"Heading" : "Hello World",
-			"Message": "Welcome to the Home Page",
-		})
+		c.HTML(http.StatusOK, "index.html", nil)
 	})
 
-	r.Static("/static", "./static")
+	r.GET("/:page", func(c *gin.Context) {
+		var page = c.Param("page")
+
+		if !strings.HasSuffix(page, ".html") {
+			page += ".html"
+		}
+
+		if _, err := os.Stat("templates/" + page); err == nil {
+			c.HTML(http.StatusOK, page, nil)
+		} else {
+			c.HTML(http.StatusNotFound, "404.html", nil)
+		}
+	})
+
+
+
 
 	r.GET("/hello", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
