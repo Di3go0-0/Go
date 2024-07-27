@@ -13,13 +13,26 @@ type User struct {
 var users []User
 
 func MainRoutes(r *gin.Engine) *gin.Engine {
+
+	r.LoadHTMLGlob("templates/*.html")
+
 	r.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"Title": "Home Page",
+			"Heading" : "Hello World",
+			"Message": "Welcome to the Home Page",
+		})
+	})
+
+	r.Static("/static", "./static")
+
+	r.GET("/hello", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Hello World",
 		})
 	})
 
-	r.GET("/:name", func(c *gin.Context) {
+	r.GET("/hi/:name", func(c *gin.Context) {
 		name := c.Param("name")
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Hi! " + name,
